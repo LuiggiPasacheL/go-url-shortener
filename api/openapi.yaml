@@ -1,0 +1,179 @@
+openapi: 3.0.4
+info:
+  title: Swagger Url Shortener - OpenAPI 3.0
+  description: |-
+    This is a sample Url Shortener Server based on the OpenAPI 3.0 specification.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+servers:
+  - url: http://localhost:8000/
+tags:
+  - name: urls
+    description: Operations about urls
+paths:
+  /urls:
+    get:
+      tags:
+        - urls
+      summary: Get urls
+      description: Get all urls
+      operationId: getUrls
+      parameters:
+        - name: tags
+          in: query
+          description: Tags to filter by
+          required: false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      code:
+                        type: string
+                      message:
+                        type: string
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Url'
+        '400':
+          description: Invalid tag value
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseResponse"
+    post:
+      tags:
+        - urls
+      summary: Add a new url to short.
+      description: Add a new url to short.
+      operationId: addUrl
+      requestBody:
+        description: Create a new url to short.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Url'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Url'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+                schema:
+                  $ref: "#/components/schemas/BaseResponse"
+  /urls/r:
+    get:
+      tags:
+        - urls
+      summary: Redirect urls by short url.
+      description: Redirect urls by short url.
+      operationId: redirectUrlByCode
+      parameters:
+        - name: s
+          in: query
+          description: short code to redirect
+          required: false
+          explode: true
+          schema:
+            type: string
+            default: available
+            enum:
+              - available
+              - pending
+              - sold
+      responses:
+        '308':
+          description: successful operation
+        '400':
+          description: Invalid status value
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseResponse"
+  /urls/{urlId}:
+    get:
+      tags:
+        - urls
+      summary: Find url by ID.
+      description: Returns a single Url.
+      operationId: getUrlById
+      parameters:
+        - name: urlId
+          in: path
+          description: ID of url to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Url'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Url not found
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseResponse"
+components:
+  schemas:
+    Url:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+        short_name:
+          type: string
+    BaseResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
