@@ -105,15 +105,10 @@ paths:
         - name: s
           in: query
           description: short code to redirect
-          required: false
+          required: true
           explode: true
           schema:
             type: string
-            default: available
-            enum:
-              - available
-              - pending
-              - sold
       responses:
         '308':
           description: successful operation
