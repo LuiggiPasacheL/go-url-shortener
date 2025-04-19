@@ -166,3 +166,10 @@ func (h UrlHandler) GetUrl(c *gin.Context) {
         Data: urlDto,
     })
 }
+
+func (h UrlHandler) Health(c *gin.Context) {
+	c.JSON(http.StatusOK, dto.BaseResponse{
+		Code: http.StatusOK,
+		Message: "Service is healthy",
+	})
+}

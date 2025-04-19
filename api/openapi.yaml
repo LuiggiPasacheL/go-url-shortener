@@ -94,7 +94,7 @@ paths:
             application/json:
                 schema:
                   $ref: "#/components/schemas/BaseResponse"
-  /urls/r:
+  /r:
     get:
       tags:
         - urls

@@ -1,13 +1,12 @@
 package router
 
 import (
-	"net/http"
-
+	"github.com/LuiggiPasacheL/go-url-shortener/internal/api"
 	"github.com/LuiggiPasacheL/go-url-shortener/pkg/log"
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter() *gin.Engine {
+func SetupRouter(h api.UrlHandler) *gin.Engine {
 
 	r := gin.Default()
 
@@ -15,9 +14,15 @@ func SetupRouter() *gin.Engine {
 
     r.Use(log.LoggerMiddleware())
 
-	r.GET("/health", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	})
+	r.GET("/health", h.Health)
+
+	r.GET("/urls", h.GetAllUrls)
+
+	r.POST("/urls", h.CreateUrl)
+
+	r.GET("/r", h.RedirectUrl)
+
+	r.GET("/urls/:id", h.GetUrl)
 
 	return r
 }

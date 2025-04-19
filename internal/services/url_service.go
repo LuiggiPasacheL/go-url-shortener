@@ -12,3 +12,5 @@ type UrlService interface {
     GetAllUrls(ctx context.Context) ([]*models.Url, error)
     RedirectUrl(ctx context.Context, shortUrl string) (*models.Url, error)
 }
+
+

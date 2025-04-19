@@ -11,4 +11,5 @@ type UrlRepository interface {
     GetById(ctx context.Context, id int) (*models.Url, error)
     GetByShortUrl(ctx context.Context, shortUrl string) (*models.Url, error)
     GetAll(ctx context.Context) ([]*models.Url, error)
+	GetByUrl(ctx context.Context, url string) (*models.Url, error)
 }
