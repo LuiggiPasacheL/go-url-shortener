@@ -135,8 +135,8 @@ func (r *UrlRepositorySqlite) GetAll(ctx context.Context) ([]*models.Url, error)
 }
 
 
-func (r *UrlRepositorySqlite) GetByUrl(ctx context.Context, url string) (*models.Url, error) {
-	rows, err := r.db.QueryContext(ctx, "SELECT id, url, shortUrl FROM urls WHERE url = ?", url)
+func (r *UrlRepositorySqlite) GetByUrl(ctx context.Context, urlStr string) (*models.Url, error) {
+	rows, err := r.db.QueryContext(ctx, "SELECT id, url, shortUrl FROM urls WHERE url = ?", urlStr)
 	if err != nil {
 		return nil, err
 	}
