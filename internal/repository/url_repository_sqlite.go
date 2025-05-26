@@ -22,7 +22,7 @@ func NewUrlRepositorySqlite(file string) (*UrlRepositorySqlite, error){
 		db: db,
 	}
 
-	_, err = db.Exec("IF NOT EXISTS CREATE TABLE URL(id INTEGER PRIMARY KEY AUTOINCREMENT, url VARCHAR(250), shortUrl VARCHAR(250))")
+	_, err = db.Exec("IF NOT EXISTS CREATE TABLE urls(id INTEGER PRIMARY KEY AUTOINCREMENT, url VARCHAR(250), shortUrl VARCHAR(250))")
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,31 @@ func NewUrlRepositorySqlite(file string) (*UrlRepositorySqlite, error){
 }
 
 func (r *UrlRepositorySqlite) Create(ctx context.Context, url *models.Url) (*models.Url, error) {
-	return nil, errors.New("Not implemented")
+	stmt, err := r.db.PrepareContext(ctx, "INSERT INTO urls(url, shortUrl) VALUES ($1, $2) ")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	res, err := stmt.Exec(url.Url, url.ShortUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	id64 := int(id)
+
+	newUrl := models.Url{
+		Id: &id64,
+		Url: url.Url,
+		ShortUrl: url.ShortUrl,
+	}
+
+	return &newUrl, nil
 }
 
 func (r *UrlRepositorySqlite) GetById(ctx context.Context, id int) (*models.Url, error) {
