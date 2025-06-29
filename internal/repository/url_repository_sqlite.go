@@ -11,7 +11,7 @@ type UrlRepositorySqlite struct {
 	db *sql.DB
 }
 
-func NewUrlRepositorySqlite(file string) (*UrlRepositorySqlite, error){
+func NewUrlRepositorySqlite(file string) (*UrlRepositorySqlite, error) {
 	db, err := sql.Open("sqlite3", "file:"+file+".sqlite?cache=shared")
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (r *UrlRepositorySqlite) Create(ctx context.Context, url *models.Url) (*mod
 	}
 	defer stmt.Close()
 
-	res, err := stmt.Exec(url.Url, url.ShortUrl)
+	res, err := stmt.Exec(url.LongUrl, url.ShortUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -49,8 +49,8 @@ func (r *UrlRepositorySqlite) Create(ctx context.Context, url *models.Url) (*mod
 	id64 := int(id)
 
 	newUrl := models.Url{
-		Id: &id64,
-		Url: url.Url,
+		Id:       &id64,
+		LongUrl:  url.LongUrl,
 		ShortUrl: url.ShortUrl,
 	}
 
@@ -69,8 +69,8 @@ func (r *UrlRepositorySqlite) GetById(ctx context.Context, id int) (*models.Url,
 		err = rows.Scan(&sId, &sUrl, &sShortUrl)
 
 		url := models.Url{
-			Id: &sId,
-			Url: sUrl,
+			Id:       &sId,
+			LongUrl:  sUrl,
 			ShortUrl: sShortUrl,
 		}
 
@@ -92,8 +92,8 @@ func (r *UrlRepositorySqlite) GetByShortUrl(ctx context.Context, shortUrl string
 		err = rows.Scan(&sId, &sUrl, &sShortUrl)
 
 		url := models.Url{
-			Id: &sId,
-			Url: sUrl,
+			Id:       &sId,
+			LongUrl:  sUrl,
 			ShortUrl: sShortUrl,
 		}
 
@@ -120,8 +120,8 @@ func (r *UrlRepositorySqlite) GetAll(ctx context.Context) ([]*models.Url, error)
 		}
 
 		url := models.Url{
-			Id: &sId,
-			Url: sUrl,
+			Id:       &sId,
+			LongUrl:  sUrl,
 			ShortUrl: sShortUrl,
 		}
 
@@ -133,7 +133,6 @@ func (r *UrlRepositorySqlite) GetAll(ctx context.Context) ([]*models.Url, error)
 
 	return urls, err
 }
-
 
 func (r *UrlRepositorySqlite) GetByUrl(ctx context.Context, urlStr string) (*models.Url, error) {
 	rows, err := r.db.QueryContext(ctx, "SELECT id, url, shortUrl FROM urls WHERE url = ?", urlStr)
@@ -147,8 +146,8 @@ func (r *UrlRepositorySqlite) GetByUrl(ctx context.Context, urlStr string) (*mod
 		err = rows.Scan(&sId, &sUrl, &sShortUrl)
 
 		url := models.Url{
-			Id: &sId,
-			Url: sUrl,
+			Id:       &sId,
+			LongUrl:  sUrl,
 			ShortUrl: sShortUrl,
 		}
 

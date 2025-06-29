@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/google/uuid"
 
 	"github.com/LuiggiPasacheL/go-url-shortener/internal/models"
 	"github.com/LuiggiPasacheL/go-url-shortener/internal/repository"
@@ -18,6 +19,13 @@ func NewUrlServiceImpl(repository repository.UrlRepository) *UrlServiceImpl {
 	}
 }
 
+// shortenURL generates a short identifier for the given longURL.
+// TODO: Replace UUID generation with a deterministic hash.
+func (s *UrlServiceImpl) shortenUrl(longUrl string) string {
+	id := uuid.New()
+	return id.String()
+}
+
 func (s *UrlServiceImpl) CreateUrl(ctx context.Context, url string) (*models.Url, error) {
 	u, err := s.repository.GetByUrl(ctx, url)
 	if err != nil {
@@ -29,7 +37,8 @@ func (s *UrlServiceImpl) CreateUrl(ctx context.Context, url string) (*models.Url
 	}
 
 	newUrl := models.Url{
-		Url: url,
+		LongUrl: url,
+		ShortUrl: s.shortenUrl(url),
 	}
 
 	u, err = s.repository.Create(ctx, &newUrl)

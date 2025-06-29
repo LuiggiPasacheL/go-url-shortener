@@ -1,7 +1,7 @@
 package models
 
 type Url struct {
-	Id       *int  
-	Url      string
+	Id       *int
+	LongUrl  string
 	ShortUrl string
 }
