@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -48,6 +49,7 @@ func (h UrlHandler) GetAllUrls(c *gin.Context) {
     for id := range urls {
         urlDtos[id] = dto.Url{
             Id:       urls[id].Id,
+			LongUrl:  urls[id].LongUrl,
             ShortUrl: urls[id].ShortUrl,
         }
     }
@@ -65,15 +67,15 @@ func (h UrlHandler) CreateUrl(c *gin.Context) {
 
     var urlDto dto.Url
     if err := c.ShouldBindJSON(&urlDto); err != nil {
-        logger.Error("Failed to bind JSON", "error", err)
+        logger.Error("Failed to bind JSON", "error", err.Error())
         c.JSON(http.StatusBadRequest, dto.BaseResponse{
             Code:    http.StatusBadRequest,
-            Message: "Invalid input",
+            Message: fmt.Sprintf("Invalid input %s", err.Error()),
         })
         return
     }
 
-    url, err := h.urlService.CreateUrl(c, urlDto.Url)
+    url, err := h.urlService.CreateUrl(c, urlDto.LongUrl)
     if err != nil {
         logger.Error("Failed to create URL", "error", err)
         c.JSON(http.StatusInternalServerError, dto.BaseResponse{
@@ -88,6 +90,7 @@ func (h UrlHandler) CreateUrl(c *gin.Context) {
         Message: "URL created successfully",
         Data: dto.Url{
             Id:       url.Id,
+			LongUrl:  url.LongUrl,
             ShortUrl: url.ShortUrl,
         },
     })
@@ -156,7 +159,7 @@ func (h UrlHandler) GetUrl(c *gin.Context) {
 
     urlDto := dto.Url{
         Id: url.Id,
-        Url: url.Url,
+        LongUrl: url.LongUrl,
         ShortUrl: url.ShortUrl,
     }
 
